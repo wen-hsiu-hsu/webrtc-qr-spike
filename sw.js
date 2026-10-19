@@ -1,4 +1,4 @@
-const CACHE = 'pair-v2';
+const CACHE = 'pair-v3';
 const FILES = ['./', 'index.html', 'app.js', 'manifest.webmanifest', 'icon.svg', 'vendor/qrcode.js', 'vendor/jsQR.js'];
 
 self.addEventListener('install', e => {

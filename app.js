@@ -1,4 +1,4 @@
-const VERSION = '2';
+const VERSION = '3';
 const SLOTS = 3;
 const $ = id => document.getElementById(id);
 const t0 = performance.now();
@@ -130,7 +130,17 @@ function stopCamera() {
   camStream?.getTracks().forEach(tr => tr.stop());
   camStream = null;
   $('video').className = 'hidden';
+  $('flipCam').classList.add('hidden');
 }
+
+let facing = 'environment';
+$('flipCam').onclick = async () => {
+  const videoClass = $('video').className;
+  stopCamera();
+  facing = facing === 'environment' ? 'user' : 'environment';
+  try { await startCamera(facing, videoClass); $('flipCam').classList.remove('hidden'); }
+  catch (e) { log('ERROR flip camera ' + e.message); }
+};
 
 // Calls onCode for every newly seen QR text until stop() is called.
 function scanLoop(onCode) {
@@ -207,11 +217,10 @@ let stopHostScan = null;
 $('beHost').onclick = async () => {
   role = 'host';
   audio = new (window.AudioContext || window.webkitAudioContext)();
-  const facing = document.querySelector('input[name=cam]:checked').value;
   $('roleBtns').classList.add('hidden');
-  log(`role host, camera ${facing}`);
+  log('role host');
   try {
-    try { await startCamera(facing, 'preview'); }
+    try { await startCamera(facing, 'preview'); $('flipCam').classList.remove('hidden'); }
     catch (e) { log('camera failed, paste only: ' + e.message); }
     const certificate = await RTCPeerConnection.generateCertificate({ name: 'ECDSA', namedCurve: 'P-256' });
     for (let i = 0; i < SLOTS; i++) {
@@ -222,7 +231,7 @@ $('beHost').onclick = async () => {
     }
     await Promise.all(hostPeers.map(p => gather(p.pc, p.label)));
     showQr(encodeInvitation(hostPeers.map(p => p.pc.localDescription)), '邀請（3 個座位）');
-    toast(facing === 'user' ? '請加入者掃描，再把回應螢幕朝下蓋在主機上方' : '請加入者掃描，再翻過來掃他們的回應');
+    toast('請加入者掃描，再翻過來掃他們的回應');
     if (camStream) stopHostScan = scanLoop(text => acceptAnswer(text).catch(e => log('ERROR ' + e.message)));
   } catch (e) { log('ERROR ' + e.message); }
 };

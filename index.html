@@ -33,11 +33,6 @@
 <div class="muted">版本 <span id="ver"></span> · <span id="ua"></span> · SW <span id="sw">?</span> · 網路 <span id="online"></span></div>
 
 <div id="roleBtns">
-  <fieldset>
-    <legend>主機的鏡頭擺法</legend>
-    <label><input type="radio" name="cam" value="environment" checked> 背面鏡頭：讓人掃完後，翻過來掃對方</label><br>
-    <label><input type="radio" name="cam" value="user"> 前鏡頭：主機平放桌上，對方螢幕朝下蓋在上方</label>
-  </fieldset>
   <button id="beHost">建立離線房間</button>
   <button id="beGuest">加入離線房間</button>
 </div>
@@ -49,6 +44,7 @@
   <div id="qr"></div>
 </div>
 <video id="video" class="hidden" playsinline muted></video>
+<button id="flipCam" class="hidden">翻轉鏡頭</button>
 
 <div id="slotPick" class="hidden">
   <div>選一個座位（跟其他人講好，不要重複）</div>
