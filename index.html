@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>離線配對驗證</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+  :root { color-scheme: light dark; --bg:#fff; --fg:#111; --muted:#666; --line:#ccc; --ok:#0a7d32; --bad:#b3261e; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#111; --fg:#eee; --muted:#999; --line:#444; --ok:#5fd38a; --bad:#ff8a80; } }
+  body { margin:0; padding:16px; font:16px/1.4 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  h1 { font-size:18px; margin:0 0 4px; }
+  .muted { color:var(--muted); font-size:13px; }
+  fieldset { border:1px solid var(--line); border-radius:8px; margin:12px 0; padding:8px 12px; }
+  button { font-size:16px; padding:10px 14px; margin:4px 4px 4px 0; border-radius:8px; border:1px solid var(--line); background:transparent; color:inherit; }
+  #qr { background:#fff; padding:12px; display:inline-block; margin-top:8px; }
+  #qr svg { width:min(80vw, 420px); height:auto; display:block; }
+  video { width:100%; max-width:420px; display:block; margin-top:8px; }
+  #peers div { padding:4px 0; border-bottom:1px solid var(--line); }
+  .ok { color:var(--ok); } .bad { color:var(--bad); }
+  #log { white-space:pre-wrap; font:12px/1.35 ui-monospace, monospace; max-height:50vh; overflow:auto; border:1px solid var(--line); padding:8px; border-radius:8px; }
+  textarea { width:100%; box-sizing:border-box; font:12px ui-monospace, monospace; }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<h1>離線房間配對驗證</h1>
+<div class="muted">版本 <span id="ver"></span> · <span id="ua"></span> · SW <span id="sw">?</span> · 網路 <span id="online"></span></div>
+
+<fieldset>
+  <legend>設定（兩台裝置要一致）</legend>
+  <label><input type="radio" name="enc" value="M" checked> 精簡 SDP（只放 ufrag/pwd/指紋/候選）</label><br>
+  <label><input type="radio" name="enc" value="F"> 完整 SDP（deflate 壓縮）</label><br>
+  <label><input type="checkbox" id="camFirst" checked> 收集候選前先開相機（避免 mDNS 遮蔽 IP）</label>
+</fieldset>
+
+<div id="roleBtns">
+  <button id="beHost">我是主機</button>
+  <button id="beGuest">我是加入者</button>
+</div>
+
+<div id="hostUi" class="hidden">
+  <button id="newPeer">邀請下一位玩家</button>
+  <button id="scanAnswer" disabled>掃描回應 QR code</button>
+</div>
+<div id="guestUi" class="hidden">
+  <button id="scanOffer">掃描主機的 QR code</button>
+</div>
+
+<div id="qrBox" class="hidden">
+  <div id="qrLabel" class="muted"></div>
+  <div id="qr"></div>
+</div>
+<video id="video" class="hidden" playsinline muted></video>
+<details>
+  <summary class="muted">掃不到時手動貼上</summary>
+  <textarea id="paste" rows="4"></textarea>
+  <button id="pasteGo">使用貼上的內容</button>
+  <button id="copyPayload">複製目前 QR 內容</button>
+</details>
+
+<h2 style="font-size:16px">連線</h2>
+<div id="peers"></div>
+
+<h2 style="font-size:16px">紀錄</h2>
+<button id="copyLog">複製紀錄</button><button id="clearLog">清除紀錄</button>
+<div id="log"></div>
+
+<script src="vendor/qrcode.js"></script>
+<script src="vendor/jsQR.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
